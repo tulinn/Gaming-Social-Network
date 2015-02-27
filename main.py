@@ -1,30 +1,3 @@
-'''
-public class Floor {
-	private int totalX, totalY;
-	public Floor(x, y) {
-		totalX = x;
-		totalY = y;
-	}
-}
-
-public class Automobile {
-	private int x, y;
-	private double fuel;
-	public void drive(x, y) {}
-	public double currentFuel() {}
-}
-
-public class Car extends Automobile {}
-
-public class Truck {}
-
-public class Garage {
-	private Floor[] floors;
-	public Garage(n) {
-		
-	}
-}
-'''
 # --------------------------- #
 # Intro to CS Final Project   #
 # Gaming Social Network       #
@@ -76,6 +49,8 @@ public class Garage {
 # a task. You are encouraged to test your code by using print statements and the 
 # Test Run button. 
 # ----------------------------------------------------------------------------- 
+
+from ds import Queue
 
 # Example string input. Use it to test your code.
 example_input = "John is connected to Bryant, Debra, Walter.\
@@ -362,6 +337,45 @@ def path_to_friend(network, user_A, user_B):
 
 
 # Make-Your-Own-Procedure (MYOP)
+
+
+def Get_Nth_Connections(network, originUser, degree):
+	"""
+	>>> net = create_data_structure(example_input)
+	>>> Get_Nth_Connections(net, 'John', 1)
+	['Bryant', 'Debra', 'Walter']
+	>>> Get_Nth_Connections(net, 'John', 2)	
+	[Bryant, Debra, Walter, Olive, Ollie, Freda, Mercedes, Levi, Jennie, Robin]
+	"""
+	if degree < 0:
+		return None
+	if degree == 0:
+		return originUser
+	currDegree = 1
+	def BFS(network, originUser, degree, currDegree):
+		visited = {}
+		people = []
+		for user in network:
+			visited[user] = False
+		visited[originUser] = True
+		queue = Queue()
+		queue.enqueue(originUser)
+		while not queue.isEmpty():
+			u = queue.dequeue()
+			if currDegree <= degree:
+				currDegree += 1
+				for v in network[u]['connections']:
+					visited[v] = True
+					queue.enqueue(v)
+					if v not in people and v != originUser:
+						people.append(v)
+
+		return people
+	people = BFS(network, originUser, degree, currDegree)
+	return people
+
+
+
 # ----------------------------------------------------------------------------- 
 # Your MYOP should either perform some manipulation of your network data 
 # structure (like add_new_user) or it should perform some valuable analysis of 
