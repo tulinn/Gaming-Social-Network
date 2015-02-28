@@ -51,6 +51,7 @@
 # ----------------------------------------------------------------------------- 
 
 from ds import Queue
+from graph import BFS
 
 # Example string input. Use it to test your code.
 example_input = "John is connected to Bryant, Debra, Walter.\
@@ -339,41 +340,31 @@ def path_to_friend(network, user_A, user_B):
 # Make-Your-Own-Procedure (MYOP)
 
 
-def Get_Nth_Connections(network, originUser, degree):
+def Get_UpTo_Nth_Connections(network, originUser, n): # fix this
 	"""
 	>>> net = create_data_structure(example_input)
-	>>> Get_Nth_Connections(net, 'John', 1)
+	>>> Get_UpTo_Nth_Connections(net, 'John', 1)
 	['Bryant', 'Debra', 'Walter']
-	>>> Get_Nth_Connections(net, 'John', 2)	
-	[Bryant, Debra, Walter, Olive, Ollie, Freda, Mercedes, Levi, Jennie, Robin]
+	>>> Get_UpTo_Nth_Connections(net, 'John', 2)	
+	['Bryant', 'Olive', 'Ollie', 'Freda', 'Mercedes', 'Debra', 'Walter', 'Levi', 'Jennie', 'Robin', 'Walter', 'John', 'Levi', 'Bryant']
 	"""
-	if degree < 0:
+	if n < 0:
 		return None
-	if degree == 0:
+	if n == 0:
 		return originUser
 	currDegree = 1
-	def BFS(network, originUser, degree, currDegree):
-		visited = {}
-		people = []
-		for user in network:
-			visited[user] = False
-		visited[originUser] = True
-		queue = Queue()
-		queue.enqueue(originUser)
-		while not queue.isEmpty():
-			u = queue.dequeue()
-			if currDegree <= degree:
-				currDegree += 1
-				for v in network[u]['connections']:
-					visited[v] = True
-					queue.enqueue(v)
-					if v not in people and v != originUser:
-						people.append(v)
-
-		return people
-	people = BFS(network, originUser, degree, currDegree)
-	return people
-
+	neighbors = BFS(network, originUser) #get the first degree neighbors of every user 
+	# sonra, recursive(neighbors)
+	people = []
+	def action(network, user, n): #get up nth degree connections using recursion
+		if n == 0:
+			pass
+		else:
+			for connection in network[user]['connections']:
+				people.append(connection)
+				action(network, connection, n - 1) 
+	action(network, originUser, n)
+	return people 
 
 
 # ----------------------------------------------------------------------------- 
@@ -384,8 +375,9 @@ def Get_Nth_Connections(network, originUser, degree):
 
 # Replace this with your own procedure! You can also uncomment the lines below
 # to see how your code behaves. Have fun!
-# print("hello")
-# net = create_data_structure(example_input)
+#print("hello")
+net = create_data_structure(example_input)
+print Get_UpTo_Nth_Connections(net, 'John', 2)
 #print net
 #print path_to_friend(net, "John", "Ollie")
 #print get_connections(net, "Debra")
@@ -405,7 +397,6 @@ def Get_Nth_Connections(network, originUser, degree):
 #print boolean
 # print net["John"]['connections']
 # print path_to_friend(net, "John", "Levi")
-
 if __name__ == "__main__":
 	import doctest
 	doctest.testmod()
